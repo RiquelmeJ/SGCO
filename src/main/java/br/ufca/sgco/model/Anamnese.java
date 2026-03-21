@@ -1,4 +1,4 @@
-package br.ufca.sgco.model;
+package br.ufca.sgco.model; 
 
 public class Anamnese {
     private String historico;
@@ -42,3 +42,4 @@ public class Anamnese {
         return "Anamnese(Histórico: " + historico + ", Alergias: " + alergias + ", Observações: " + observacoes + ")";
     }
 }
+
