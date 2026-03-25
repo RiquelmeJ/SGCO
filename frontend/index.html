@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGCO - Sistema de Gestão Odontológica</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <i class="fas fa-tooth"></i>
+                </div>
+                <h1 class="logo-text">SGCO</h1>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" data-section="dashboard">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </a>
+                <a href="#" class="nav-item" data-section="patients">
+                    <i class="fas fa-user-injured"></i> Pacientes
+                </a>
+                <a href="#" class="nav-item" data-section="procedures">
+                    <i class="fas fa-notes-medical"></i> Procedimentos
+                </a>
+                <a href="#" class="nav-item" data-section="documents">
+                    <i class="fas fa-file-medical"></i> Documentos
+                </a>
+                
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Buscar paciente ou CPF...">
+                </div>
+                <div class="user-profile">
+                    <div class="user-info">
+                        <div class="user-name">Dr. Ricardo Silva</div>
+                        <div class="user-role">Odontologista Geral</div>
+                    </div>
+                    <div class="avatar">RS</div>
+                </div>
+            </header>
+
+            <!-- Scrollable Content Area -->
+            <div class="content-area">
+                
+                <!-- Dashboard Section -->
+                <section id="dashboard" class="section active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon bg-blue">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h3>Consultas Hoje</h3>
+                                <p id="stat-today">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon bg-green">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h3>Total Pacientes</h3>
+                                <p id="stat-patients">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon bg-orange">
+                                <i class="fas fa-procedures"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h3>Total Procedimentos</h3>
+                                <p id="stat-total-proc">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon bg-red">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h3>Pendentes</h3>
+                                <p>2</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Próximos Atendimentos</h2>
+                            <button class="btn btn-outline">Ver Agenda Completa</button>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Paciente</th>
+                                    <th>Horário</th>
+                                    <th>Procedimento</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboard-proc-table">
+                                <!-- Data will be loaded from API -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Patients Section -->
+                <section id="patients" class="section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Base de Pacientes</h2>
+                            <button class="btn btn-primary" id="btn-new-patient">
+                                <i class="fas fa-plus"></i> Novo Paciente
+                            </button>
+                        </div>
+                        <div class="search-bar" style="margin-bottom: 1.5rem; width: 100%;">
+                            <i class="fas fa-filter"></i>
+                            <input type="text" placeholder="Filtrar por nome, CPF ou contato...">
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>CPF</th>
+                                    <th>Nascimento</th>
+                                    <th>Contato</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="patient-table-body">
+                                <!-- Data will be loaded from API -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Procedures Section -->
+                <section id="procedures" class="section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Registrar Novo Procedimento</h2>
+                        </div>
+                        <form id="form-procedure" class="form-grid">
+                            <div class="form-group full-width">
+                                <label>Paciente</label>
+                                <select id="proc-patient" required>
+                                    <option value="">Selecione um paciente...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Tipo de Procedimento</label>
+                                <input type="text" id="proc-type" placeholder="Ex: Restauração" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Data</label>
+                                <input type="date" id="proc-date">
+                            </div>
+                            <div class="form-group">
+                                <label>Valor (R$)</label>
+                                <input type="number" id="proc-value" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Forma de Pagamento</label>
+                                <select id="proc-payment">
+                                    <option value="1">Dinheiro</option>
+                                    <option value="2">Cartão</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select id="proc-status">
+                                    <option value="Agendado">Agendado</option>
+                                    <option value="Em Andamento">Em Andamento</option>
+                                    <option value="Concluído">Concluído</option>
+                                    <option value="Cancelado">Cancelado</option>
+                                </select>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Observações</label>
+                                <textarea id="proc-obs" rows="3"></textarea>
+                            </div>
+                            <div class="full-width" style="text-align: right;">
+                                <button type="submit" class="btn btn-primary">Registrar Procedimento</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Documents Section -->
+                <section id="documents" class="section">
+                    <div class="stats-grid">
+                        <div class="stat-card" style="cursor: pointer;" id="card-atestado">
+                            <div class="stat-icon bg-blue">
+                                <i class="fas fa-file-medical"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h3>Atestado</h3>
+                                <p style="font-size: 0.9rem;">Gerar atestado médico</p>
+                            </div>
+                        </div>
+                        <div class="stat-card" style="cursor: pointer;" id="card-encaminhamento">
+                            <div class="stat-icon bg-green">
+                                <i class="fas fa-share-square"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h3>Encaminhamento</h3>
+                                <p style="font-size: 0.9rem;">Para outros especialistas</p>
+                            </div>
+                        </div>
+                        <div class="stat-card" style="cursor: pointer;" id="card-receituario">
+                            <div class="stat-icon bg-orange">
+                                <i class="fas fa-prescription"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h3>Receituário</h3>
+                                <p style="font-size: 0.9rem;">Prescrição inteligente</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Documentos Recentes</h2>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Paciente</th>
+                                    <th>Tipo</th>
+                                    <th>Data</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="documents-table-body">
+                                <!-- Data will be loaded from API -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal-patient" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="card-title">Cadastrar Novo Paciente</h2>
+                <button class="btn btn-sm btn-outline" id="close-modal">&times;</button>
+            </div>
+            <form id="form-patient" class="form-grid">
+                <div class="form-group">
+                    <label for="p-name">Nome Completo *</label>
+                    <input type="text" id="p-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="p-cpf">CPF *</label>
+                    <input type="text" id="p-cpf" placeholder="000.000.000-00" required>
+                </div>
+                <div class="form-group">
+                    <label for="p-birth">Data de Nascimento</label>
+                    <input type="date" id="p-birth">
+                </div>
+                <div class="form-group">
+                    <label for="p-contact">Contato/Telefone</label>
+                    <input type="text" id="p-contact" placeholder="(00) 00000-0000">
+                </div>
+                <div class="form-group full-width">
+                    <label for="p-history">Anamnese / Histórico Médico</label>
+                    <textarea id="p-history" rows="2" placeholder="Histórico clínico..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="p-allergies">Alergias</label>
+                    <input type="text" id="p-allergies" placeholder="Ex: Penicilina, látex...">
+                </div>
+                <div class="form-group">
+                    <label for="p-obs">Observações Gerais</label>
+                    <input type="text" id="p-obs">
+                </div>
+                <div class="full-width" style="text-align: right; margin-top: 1rem;">
+                    <button type="submit" class="btn btn-primary">Salvar Paciente</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Atestado -->
+    <div id="modal-atestado" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="card-title">Gerar Atestado Rápido</h2>
+                <button class="btn btn-sm btn-outline close-modal-btn">&times;</button>
+            </div>
+            <form id="form-atestado" class="form-grid">
+                <div class="form-group full-width">
+                    <label>CPF do Paciente</label>
+                    <input type="text" id="atest-cpf" required>
+                </div>
+                <div class="form-group">
+                    <label>Dias de Repouso</label>
+                    <input type="number" id="atest-dias" value="1">
+                </div>
+                <div class="form-group">
+                    <label>Motivo</label>
+                    <input type="text" id="atest-motivo" placeholder="Ex: Necessidade de repouso">
+                </div>
+                <div class="full-width" style="text-align: right;">
+                    <button type="submit" class="btn btn-primary">Gerar PDF</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Encaminhamento -->
+    <div id="modal-encaminhamento" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="card-title">Emitir Encaminhamento</h2>
+                <button class="btn btn-sm btn-outline close-modal-btn">&times;</button>
+            </div>
+            <form id="form-encaminhamento" class="form-grid">
+                <div class="form-group full-width">
+                    <label>CPF do Paciente</label>
+                    <input type="text" id="enc-cpf" required>
+                </div>
+                <div class="form-group">
+                    <label>Especialidade Destino</label>
+                    <input type="text" id="enc-esp" placeholder="Ex: Ortodontista">
+                </div>
+                <div class="form-group">
+                    <label>Motivo / Observações</label>
+                    <input type="text" id="enc-motivo">
+                </div>
+                <div class="full-width" style="text-align: right;">
+                    <button type="submit" class="btn btn-primary">Gerar PDF</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Receituário -->
+    <div id="modal-receituario" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="card-title">Prescrição Inteligente</h2>
+                <button class="btn btn-sm btn-outline close-modal-btn">&times;</button>
+            </div>
+            <form id="form-receituario" class="form-grid">
+                <div class="form-group full-width">
+                    <label>CPF do Paciente</label>
+                    <input type="text" id="rec-cpf" required>
+                </div>
+                <div id="itens-receita" class="full-width">
+                    <!-- Dynamic Items -->
+                    <div class="form-group" style="border: 1px solid var(--border); padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+                        <label>Medicamento</label>
+                        <input type="text" class="rec-med" placeholder="Nome do remédio">
+                        <label>Posologia</label>
+                        <input type="text" class="rec-poso" placeholder="Ex: 1 comp de 8/8h">
+                        <label>Duração</label>
+                        <input type="text" class="rec-dur" placeholder="Ex: 5 dias">
+                    </div>
+                </div>
+                <div class="full-width" style="text-align: right;">
+                    <button type="submit" class="btn btn-primary">Finalizar e Gerar PDF</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Visualizar Paciente -->
+    <div id="modal-view-patient" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="card-title">Detalhes do Paciente</h2>
+                <button class="btn btn-sm btn-outline close-modal-btn">&times;</button>
+            </div>
+            <div id="view-patient-content" style="padding: 10px;">
+                <!-- Content loaded via JS -->
+            </div>
+        </div>
+    </div>
+    <div id="modal-confirm-delete" class="modal-overlay">
+        <div class="modal" style="max-width: 400px; text-align: center;">
+            <div class="modal-header">
+                <h2 class="card-title">Confirmar Exclusão</h2>
+            </div>
+            <div style="padding: 20px;">
+                <p>Tem certeza que deseja excluir este paciente? Esta ação não pode ser desfeita.</p>
+                <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
+                    <button class="btn btn-outline close-modal-btn">Cancelar</button>
+                    <button id="btn-confirm-delete" class="btn btn-primary" style="background: var(--danger);">Excluir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Detalhes do Procedimento -->
+    <div id="modal-view-procedure" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="card-title">Detalhes do Atendimento</h2>
+                <button class="btn btn-sm btn-outline close-modal-btn">&times;</button>
+            </div>
+            <div id="view-procedure-content" style="padding: 10px;">
+                <!-- Content loaded via JS -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

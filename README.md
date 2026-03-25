@@ -27,10 +27,20 @@ Os 6 padrões exigidos foram estritamente aplicados na arquitetura:
 - Acervo de Documentos 
 
 ### Como executar
-Importe este projeto no Eclipse, IntelliJ ou VSCode. Por usar arquitetura Maven, as dependências do `sqlite-jdbc` e do `Apache PDFBox` serão carregadas do `pom.xml` e automaticamente geridas.
-Execute o `br.ufca.sgco.view.Main` para utilizar a CLI interativa. O banco `sgco.db` será gerado automaticamente.
 
-Se você tem o Maven instalado localmente no terminal, basta rodar:
+#### 1. Versão Web (Interface Gráfica) - Recomendado
+Execute a classe `br.ufca.sgco.view.AppServer`. O sistema iniciará um servidor local e servirá a interface moderna.
+Acesse pelo navegador: **http://localhost:4567**
+
+Via terminal (Maven):
+```bash
+mvn compile exec:java -Dexec.mainClass="br.ufca.sgco.view.AppServer"
+```
+
+#### 2. Versão CLI (Terminal)
+Execute a classe `br.ufca.sgco.view.Main` para utilizar a CLI interativa original.
+
+Via terminal (Maven):
 ```bash
 mvn compile exec:java -Dexec.mainClass="br.ufca.sgco.view.Main"
 ```

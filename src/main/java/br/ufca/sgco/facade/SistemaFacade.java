@@ -2,6 +2,7 @@ package br.ufca.sgco.facade;
 
 import br.ufca.sgco.factory.DocumentoFactory;
 import br.ufca.sgco.model.*;
+import br.ufca.sgco.repository.DocumentoDAO;
 import br.ufca.sgco.repository.MedicamentoDAO;
 import br.ufca.sgco.repository.PacienteDAO;
 import br.ufca.sgco.repository.ProcedimentoDAO;
@@ -10,17 +11,20 @@ import br.ufca.sgco.strategy.PagamentoDinheiro;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class SistemaFacade {
     private PacienteDAO pacienteDAO;
     private ProcedimentoDAO procedimentoDAO;
     private MedicamentoDAO medicamentoDAO;
+    private DocumentoDAO documentoDAO;
     private DocumentoFactory documentoFactory;
 
     public SistemaFacade() {
         this.pacienteDAO = new PacienteDAO();
         this.procedimentoDAO = new ProcedimentoDAO();
         this.medicamentoDAO = new MedicamentoDAO();
+        this.documentoDAO = new DocumentoDAO();
         this.documentoFactory = new DocumentoFactory();
     }
 
@@ -42,14 +46,14 @@ public class SistemaFacade {
     }
 
     // 2. Registrar Procedimento (Linha do Tempo)
-    public void registrarProcedimento(String cpfPaciente, String tipo, String observacoes, double valor, int tipoPagamento) {
+    public void registrarProcedimento(String cpfPaciente, String tipo, String observacoes, double valor, int tipoPagamento, Date data, String status) {
         Paciente paciente = buscarPacientePorCpf(cpfPaciente);
         if (paciente == null) {
             System.out.println("Paciente não encontrado!");
             return;
         }
         
-        Procedimento proc = new Procedimento(new Date(), tipo, observacoes, "", valor);
+        Procedimento proc = new Procedimento(data != null ? data : new Date(), tipo, observacoes, "", valor, status != null ? status : "Agendado");
         if (tipoPagamento == 1) {
             proc.processarPagamento(new PagamentoDinheiro());
         } else {
@@ -57,6 +61,10 @@ public class SistemaFacade {
         }
         
         procedimentoDAO.salvar(proc, cpfPaciente);
+    }
+
+    public List<Map<String, Object>> listarProcedimentosDashboard() {
+        return procedimentoDAO.listarTodosComPacientes();
     }
 
     // 3. Acervo de Procedimentos (Composite)
@@ -75,6 +83,7 @@ public class SistemaFacade {
         if (p == null) return;
         Documento doc = documentoFactory.criarDocumento("atestado", p, diasRepouso, motivo);
         doc.gerarPDF();
+        documentoDAO.salvar(cpfPaciente, "Atestado", "atestado_" + cpfPaciente);
     }
 
     // 5. Encaminhamento para Especialistas
@@ -83,6 +92,7 @@ public class SistemaFacade {
         if (p == null) return;
         Documento doc = documentoFactory.criarDocumento("encaminhamento", p, especialidade, motivo);
         doc.gerarPDF();
+        documentoDAO.salvar(cpfPaciente, "Encaminhamento", "encaminhamento_" + cpfPaciente);
     }
 
     // 6. Prescrição Inteligente (Receituário)
@@ -114,6 +124,23 @@ public class SistemaFacade {
     public void finalizarReceituario(Receituario receita) {
         if (receita != null) {
             receita.gerarPDF();
+            documentoDAO.salvar(receita.getPaciente().getCpf(), "Receituário", "receituario_" + receita.getPaciente().getCpf());
         }
+    }
+
+    public List<Map<String, Object>> listarDocumentosRecentes() {
+        return documentoDAO.listarRecentes();
+    }
+
+    public void atualizarStatusProcedimento(int id, String novoStatus) {
+        procedimentoDAO.atualizarStatus(id, novoStatus);
+    }
+
+    public void atualizarPaciente(Paciente p) {
+        pacienteDAO.atualizar(p);
+    }
+
+    public boolean excluirPaciente(String cpf) {
+        return pacienteDAO.excluir(cpf);
     }
 }
