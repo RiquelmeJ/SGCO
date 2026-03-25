@@ -147,7 +147,7 @@ public class Main {
             forma = Integer.parseInt(scanner.nextLine());
         } catch (NumberFormatException e) {}
 
-        facade.registrarProcedimento(cpf, tipo, obs, valor, forma);
+        facade.registrarProcedimento(cpf, tipo, obs, valor, forma, new Date(), "Agendado");
     }
 
     private static void historicoProcedimentos() {

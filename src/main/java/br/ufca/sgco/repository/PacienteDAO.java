@@ -115,4 +115,45 @@ public class PacienteDAO {
         }
         return null;
     }
+
+    public void atualizar(Paciente p) {
+        String sql = "UPDATE pacientes SET nome = ?, dataNascimento = ?, contato = ?, historico = ?, alergias = ?, observacoes = ? WHERE cpf = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, p.getNome());
+            stmt.setString(2, p.getDataNascimento() != null ? sdf.format(p.getDataNascimento()) : null);
+            stmt.setString(3, p.getContato());
+            
+            if (p.getAnamnese() != null) {
+                stmt.setString(4, p.getAnamnese().getHistorico());
+                stmt.setString(5, p.getAnamnese().getAlergias());
+                stmt.setString(6, p.getAnamnese().getObservacoes());
+            } else {
+                stmt.setString(4, null);
+                stmt.setString(5, null);
+                stmt.setString(6, null);
+            }
+            stmt.setString(7, p.getCpf());
+            
+            stmt.executeUpdate();
+            System.out.println("Paciente " + p.getNome() + " atualizado com sucesso.");
+        } catch (SQLException e) {
+            System.err.println("Erro ao atualizar paciente: " + e.getMessage());
+        }
+    }
+
+    public boolean excluir(String cpf) {
+        String sql = "DELETE FROM pacientes WHERE cpf = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, cpf);
+            int rows = stmt.executeUpdate();
+            if (rows > 0) {
+                System.out.println("Paciente com CPF " + cpf + " excluído com sucesso.");
+                return true;
+            }
+            return false;
+        } catch (SQLException e) {
+            System.err.println("Erro ao excluir paciente: " + e.getMessage());
+            return false;
+        }
+    }
 }

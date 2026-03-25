@@ -54,6 +54,7 @@ public class DatabaseConnector {
                 + " observacoes TEXT,"
                 + " formaPagamento TEXT,"
                 + " valor REAL,"
+                + " status TEXT DEFAULT 'Agendado',"
                 + " FOREIGN KEY(paciente_id) REFERENCES pacientes(id)"
                 + ");";
                 
@@ -62,13 +63,12 @@ public class DatabaseConnector {
                 + " nome TEXT NOT NULL UNIQUE"
                 + ");";
                 
-        // Documentos table could be simplified, storing type and reference to a file or raw content
         String sqlDocumentos = "CREATE TABLE IF NOT EXISTS documentos ("
                 + " id INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + " paciente_id INTEGER,"
                 + " tipo TEXT,"
                 + " data TEXT,"
-                + " arquivo_path TEXT,"
+                + " referencia TEXT,"
                 + " FOREIGN KEY(paciente_id) REFERENCES pacientes(id)"
                 + ");";
 
@@ -77,6 +77,18 @@ public class DatabaseConnector {
             stmt.execute(sqlProcedimentos);
             stmt.execute(sqlMedicamentos);
             stmt.execute(sqlDocumentos);
+            
+            // Migrações simples para versões existentes do banco
+            try {
+                stmt.execute("ALTER TABLE procedimentos ADD COLUMN status TEXT DEFAULT 'Agendado'");
+            } catch (SQLException e1) {
+                // Coluna já existe, ignora
+            }
+            try {
+                stmt.execute("ALTER TABLE documentos ADD COLUMN referencia TEXT");
+            } catch (SQLException e2) {
+                // Coluna já existe, ignora
+            }
         } catch (SQLException e) {
             System.err.println("Erro ao criar tabelas: " + e.getMessage());
         }

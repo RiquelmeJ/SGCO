@@ -9,14 +9,16 @@ public class Procedimento {
     private String observacoes;
     private String formaPagamento;
     private double valor;
+    private String status;
     private PagamentoStrategy pagamentoStrategy;
 
-    public Procedimento(Date data, String tipo, String observacoes, String formaPagamento, double valor) {
+    public Procedimento(Date data, String tipo, String observacoes, String formaPagamento, double valor, String status) {
         this.data = data;
         this.tipo = tipo;
         this.observacoes = observacoes;
         this.formaPagamento = formaPagamento;
         this.valor = valor;
+        this.status = status;
     }
 
     public void processarPagamento(PagamentoStrategy estrategia) {
@@ -45,6 +47,9 @@ public class Procedimento {
     
     public double getValor() { return valor; }
     public void setValor(double valor) { this.valor = valor; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
     @Override
     public String toString() {
