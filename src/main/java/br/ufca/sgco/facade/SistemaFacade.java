@@ -29,12 +29,16 @@ public class SistemaFacade {
     }
 
     // 1. Cadastro de Pacientes
-    public void cadastrarPaciente(String nome, String cpf, Date dataNascimento, String contato, String historico, String alergias, String obsAnamnese) {
+    public boolean cadastrarPaciente(String nome, String cpf, Date dataNascimento, String contato, String historico, String alergias, String obsAnamnese) {
+        if (buscarPacientePorCpf(cpf) != null) {
+            return false;
+        }
         Paciente p = new Paciente(nome, cpf, dataNascimento, contato);
         if (historico != null || alergias != null || obsAnamnese != null) {
             p.setAnamnese(new Anamnese(historico, alergias, obsAnamnese));
         }
         pacienteDAO.salvar(p);
+        return true;
     }
     
     public Paciente buscarPacientePorCpf(String cpf) {

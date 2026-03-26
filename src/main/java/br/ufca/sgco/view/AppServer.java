@@ -65,18 +65,35 @@ public class AppServer {
                 return gson.toJson(facade.listarPacientes());
             });
 
+            post("/login", (req, res) -> {
+                res.type("application/json");
+                JsonObject json = gson.fromJson(req.body(), JsonObject.class);
+                String user = json.has("username") ? json.get("username").getAsString() : "";
+                String pass = json.has("password") ? json.get("password").getAsString() : "";
+                if ("admin".equals(user) && "admin".equals(pass)) {
+                    return "{\"status\": \"success\"}";
+                }
+                res.status(401);
+                return "{\"status\": \"error\", \"message\": \"Usuário ou senha inválidos\"}";
+            });
+
             post("/pacientes", (req, res) -> {
                 res.type("application/json");
                 JsonObject json = gson.fromJson(req.body(), JsonObject.class);
-                facade.cadastrarPaciente(
+                boolean success = facade.cadastrarPaciente(
                     json.get("nome").getAsString(),
                     json.get("cpf").getAsString(),
-                    json.has("dataNascimento") ? java.sql.Date.valueOf(json.get("dataNascimento").getAsString()) : null,
+                    json.has("dataNascimento") && !json.get("dataNascimento").getAsString().isEmpty() ? java.sql.Date.valueOf(json.get("dataNascimento").getAsString()) : null,
                     json.has("contato") ? json.get("contato").getAsString() : "",
                     json.has("historico") ? json.get("historico").getAsString() : null,
                     json.has("alergias") ? json.get("alergias").getAsString() : null,
                     json.has("obs") ? json.get("obs").getAsString() : null
                 );
+                
+                if (!success) {
+                    res.status(409);
+                    return "{\"status\": \"error\", \"message\": \"CPF já cadastrado no sistema.\"}";
+                }
                 return "{\"status\": \"success\"}";
             });
 
