@@ -1,11 +1,43 @@
-# Default ignored files
-/shelf/
-/workspace.xml
-# Ignored default folder with query files
-/queries/
-# Datasource local storage ignored files
-/dataSources/
-/dataSources.local.xml
-# Editor-based HTTP Client requests
-/httpRequests/
-/target/
+# IDE - IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+*.xml
+
+# IDE - VS Code
+.vscode/*
+!.vscode/extensions.json
+
+# OS
+.DS_Store
+*.suo
+
+# Build directories
+target/
+dist/
+dist-ssr/
+build/
+
+# Node.js (Frontend)
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Local files (shared secrets, configs)
+*.local
+.env
+.env.local
+.env.*.local
+
+# Other
+*.sw?
+*.ntvs*
+*.njsproj
+*.sln
