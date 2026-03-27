@@ -32,6 +32,8 @@ Os 6 padrões exigidos foram estritamente aplicados na arquitetura:
 Execute a classe `br.ufca.sgco.view.AppServer`. O sistema iniciará um servidor local e servirá a interface moderna.
 Acesse pelo navegador: **http://localhost:4567**
 
+Depois disso, vá na pasta de frontend e execute `npm run dev`
+
 Via terminal (Maven):
 ```bash
 mvn compile exec:java -Dexec.mainClass="br.ufca.sgco.view.AppServer"
